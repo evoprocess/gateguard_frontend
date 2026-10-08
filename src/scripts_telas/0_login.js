@@ -1,6 +1,14 @@
 import { API_URL, PUBLIC_IMAGES_URL, state, navigate } from '../main.js';
 
 export function loginScreen(app, options = {}) {
+  const esc = value => {
+    const element = document.createElement('span');
+    element.textContent = String(value ?? '');
+    return element.innerHTML;
+  };
+  const heading = options.system
+    ? `<span>ORGANIZAÇÃO PARCEIRA</span><h2 id="login-title">${esc(options.systemName || options.system)}</h2><p>Acesso administrativo ao painel financeiro desta organização no GateGuard.</p>`
+    : '<span>PAINEL FINANCEIRO GATEGUARD</span><h2 id="login-title">Acesso administrativo</h2><p>Entre com o identificador da organização e suas credenciais do painel.</p>';
   const modal = document.createElement('div');
   modal.className = 'login-modal';
   modal.setAttribute('role', 'dialog');
@@ -11,7 +19,7 @@ export function loginScreen(app, options = {}) {
     <section class="login-card">
       <button class="login-close" type="button" data-close-login aria-label="Fechar">&times;</button>
       <div class="brand"><img src="${PUBLIC_IMAGES_URL}/gateguard_logo.png" alt="GateGuard"></div>
-      <div class="login-heading"><span>PAINEL FINANCEIRO GATEGUARD</span><h2 id="login-title">Acesso administrativo</h2><p>Este acesso serve somente para administrar a integração e os pagamentos do site. O GateGuard não autentica usuários finais do seu site.</p></div>
+      <div class="login-heading">${heading}</div>
       <form id="login-form">
         <label>ID DO SITE<input name="system" placeholder="SIS_XXXX" required></label>
         <label>USUÁRIO DO PAINEL<input name="login" placeholder="Digite seu usuário" required></label>

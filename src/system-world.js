@@ -58,7 +58,7 @@ export function bindFirstPersonDirectory(app, openLogin, directory) {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
-  renderer.domElement.setAttribute('aria-label', 'Ambiente tridimensional dos sistemas');
+  renderer.domElement.setAttribute('aria-label', 'Ambiente tridimensional das organizações parceiras');
   container.prepend(renderer.domElement);
   const controls = new PointerLockControls(camera, renderer.domElement);
   const timer = new THREE.Timer();
@@ -255,7 +255,7 @@ export function bindFirstPersonDirectory(app, openLogin, directory) {
     const floor = directory.floors.find(item => item.systems.some(system => system.status === 'active' && system.name.toLocaleLowerCase('pt-BR') === query));
     const system = floor?.systems.find(item => item.status === 'active' && item.name.toLocaleLowerCase('pt-BR') === query);
     if (!system) {
-      searchFeedback.textContent = 'Selecione uma loja disponível na lista de sugestões.';
+      searchFeedback.textContent = 'Selecione uma organização disponível na lista de sugestões.';
       searchFeedback.classList.add('is-error');
       return;
     }
