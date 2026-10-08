@@ -16,7 +16,7 @@ export function publicHomeScreen(app, openLogin = false) {
       </header>
       <main>
         <section id="inicio" class="public-hero public-screen" data-public-screen>
-          <div class="hero-copy"><span class="public-eyebrow">PAGAMENTOS PARA SITES</span><h1>Aceite pagamentos<br><em>no seu site</em></h1><p>Adicione pagamentos para vendas e mensalidades diretamente ao seu site, com autorizações validadas com segurança, checkout integrado e acompanhamento financeiro pelo GateGuard.</p>
+          <div class="hero-copy"><span class="public-eyebrow">PAGAMENTOS PARA SITES</span><h1>Aceite pagamentos<br><em>no seu site</em></h1><p>Receba por vendas e mensalidades diretamente no seu site. O GateGuard valida a confirmação do pagamento para que o site libere a assinatura ou conclua a venda com segurança.</p>
             <div class="hero-actions"><a class="button button-primary" href="${contactLink}">Adicionar pagamentos</a><button class="text-link" data-scroll="integracao">Entender a integração <span>↓</span></button></div>
             <div class="trust-row"><span>✓ API segura</span><span>✓ Asaas isolado</span><span>✓ Credenciais fora do navegador</span></div>
           </div>
@@ -27,14 +27,14 @@ export function publicHomeScreen(app, openLogin = false) {
           <div class="solution-heading"><span class="public-eyebrow">SOLUÇÃO GATEGUARD</span><h2>Pagamentos para sites</h2><p>Uma única solução para criar cobranças, disponibilizar checkout e acompanhar todo o ciclo financeiro do site da organização.</p></div>
           <article class="solution-card">
             <div><h3>API de Pagamentos GateGuard</h3><p>A organização integra seu site ao GateGuard e acompanha cobranças, confirmações, falhas, estornos e conciliação em um painel administrativo próprio.</p><a href="${contactLink}" class="solution-contact">Integrar pagamentos</a></div>
-            <ul><li>Pix, boleto e cartão conforme configuração</li><li>Checkout e QR Code Pix</li><li>Webhooks e conciliação financeira</li><li>Histórico detalhado para suporte</li><li>Isolamento entre organizações parceiras</li><li>Auditoria das operações financeiras</li></ul>
+            <ul><li>Pix, boleto e cartão conforme configuração</li><li>Checkout e QR Code Pix</li><li>Confirmação segura para liberar vendas e assinaturas</li><li>Webhooks e conciliação financeira</li><li>Histórico detalhado para suporte</li><li>Auditoria das operações financeiras</li></ul>
           </article>
           <p class="implementation-note"><strong>Observação de implantação:</strong> quando uma organização não possui estrutura de servidor, o GateGuard pode avaliar uma camada técnica limitada à execução segura da API de pagamentos.</p>
         </section>
 
         <section id="integracao" class="responsibilities-section public-screen" data-public-screen>
           <div class="responsibilities-heading"><span class="public-eyebrow">FLUXO DE PAGAMENTO</span><h2>Da cobrança à conciliação</h2><p>O GateGuard centraliza a operação financeira e devolve ao site as informações necessárias para que a organização acompanhe cada pagamento.</p></div>
-          <div class="how-steps"><article><span>1</span><h3>Cobrança</h3><p>O site envia os dados da operação financeira para a API GateGuard.</p></article><article><span>2</span><h3>Processamento</h3><p>O GateGuard cria a cobrança no Asaas e disponibiliza checkout ou Pix.</p></article><article><span>3</span><h3>Acompanhamento</h3><p>Webhooks, eventos, estornos e conciliação ficam disponíveis para a organização.</p></article></div>
+          <div class="how-steps"><article><span>1</span><h3>Cobrança</h3><p>O site envia a venda ou mensalidade para processamento financeiro.</p></article><article><span>2</span><h3>Validação</h3><p>O GateGuard valida a confirmação do pagamento com segurança.</p></article><article><span>3</span><h3>Liberação</h3><p>O site recebe a confirmação e libera a assinatura ou conclui a venda.</p></article></div>
           <p class="responsibilities-limit">Compradores consultam e pagam no site da organização. O painel GateGuard é reservado aos administradores autorizados das organizações parceiras.</p>
         </section>
 
