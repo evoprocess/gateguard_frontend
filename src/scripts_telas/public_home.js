@@ -16,8 +16,8 @@ export function publicHomeScreen(app, openLogin = false) {
       </header>
       <main>
         <section id="inicio" class="public-hero public-screen" data-public-screen>
-          <div class="hero-copy"><span class="public-eyebrow">PAGAMENTOS PARA SITES</span><h1>Seu site vende.<br><em>O GateGuard processa.</em></h1><p>Uma plataforma dedicada ao gerenciamento de pagamentos via API, com cobranças, checkout, webhooks, conciliação e integração segura com o Asaas.</p>
-            <div class="hero-actions"><a class="button button-primary" href="${contactLink}">Integrar meu site</a><button class="text-link" data-scroll="integracao">Entender a integração <span>↓</span></button></div>
+          <div class="hero-copy"><span class="public-eyebrow">PAGAMENTOS PARA SITES</span><h1>Aceite pagamentos<br><em>no seu site</em></h1><p>Adicione pagamentos para vendas e mensalidades diretamente ao seu site, com autorizações validadas com segurança, checkout integrado e acompanhamento financeiro pelo GateGuard.</p>
+            <div class="hero-actions"><a class="button button-primary" href="${contactLink}">Adicionar pagamentos</a><button class="text-link" data-scroll="integracao">Entender a integração <span>↓</span></button></div>
             <div class="trust-row"><span>✓ API segura</span><span>✓ Asaas isolado</span><span>✓ Credenciais fora do navegador</span></div>
           </div>
           <div class="hero-visual" aria-label="Fluxo financeiro GateGuard"><div class="dashboard-preview client-preview"><div class="preview-top"><span>Pagamento</span><b class="active-pill">Confirmado</b></div><small>Processamento seguro</small><strong class="preview-value">API GateGuard</strong><div class="client-system"><span>G</span><div><small>Integração</small><b>Site → GateGuard → Asaas</b></div></div><div class="preview-stats"><span><b>Webhooks</b> monitorados</span><span><b>100%</b> servidor</span></div></div><div class="floating-card payment-card"><span>✓</span><div><b>Cobrança criada</b><small>Credenciais protegidas</small></div></div></div>
