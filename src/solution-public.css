@@ -1,0 +1,26 @@
+.solution-section {
+  position: relative;
+  display: grid;
+  align-content: center;
+  min-height: 100svh;
+  padding: 105px max(24px, calc((100vw - 1176px) / 2)) 60px;
+  background: linear-gradient(145deg, #061225, #0b2850);
+  color: #eaf4ff;
+}
+
+.solution-heading { max-width: 790px; margin-bottom: 30px; }
+.solution-heading h2 { margin: 8px 0 10px; font-size: clamp(32px, 4vw, 52px); }
+.solution-heading p { color: #a9c0dc; font-size: 17px; line-height: 1.6; }
+.solution-card { display: grid; grid-template-columns: 1.05fr .95fr; gap: 36px; padding: clamp(24px, 4vw, 46px); border: 1px solid #48a1ff; border-radius: 20px; background: linear-gradient(155deg, #102b51, #0a1a32); box-shadow: 0 22px 55px #087cff2b; }
+.solution-card h3 { margin: 0 0 12px; color: #fff; font-size: clamp(24px, 3vw, 34px); }
+.solution-card p { color: #a8bdd5; line-height: 1.65; }
+.solution-card ul { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; color: #d4e5f8; }
+.solution-card li::before { margin-right: 9px; color: #62b3ff; content: "✓"; }
+.solution-contact { display: inline-block; margin-top: 12px; padding: 13px 18px; border-radius: 9px; background: #1677ff; color: #fff; font-weight: 800; text-decoration: none; }
+.implementation-note { margin: 20px 0 0; padding: 14px 17px; border-left: 3px solid #6aaeff; background: #071a33; color: #9fb8d3; font-size: 13px; line-height: 1.55; }
+.implementation-note strong { color: #dcecff; }
+
+@media (max-width: 760px) {
+  .solution-section { padding: 95px 18px 40px; }
+  .solution-card { grid-template-columns: 1fr; gap: 20px; }
+}

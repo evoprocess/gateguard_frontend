@@ -10,6 +10,10 @@ const esc = value => {
 const money = value => Number(value || 0).toFixed(2).replace('.', ',');
 const payable = new Set(['PENDING', 'OVERDUE', 'DUNNING_REQUESTED', 'AWAITING_RISK_ANALYSIS']);
 
+function paymentRow(payment, showSite = false) {
+  return `<div class="user"><strong>${esc(payment.description || payment.chargeReference || payment.id)}</strong>${showSite ? `<span>${esc(payment.system)}</span>` : ''}<span>Ref.: ${esc(payment.chargeReference || payment.id || '—')}</span><span>Vencimento: ${esc(payment.dueDate || '—')}</span><span>R$ ${money(payment.value)}</span><span class="badge">${esc(payment.status)}</span></div>`;
+}
+
 function bindCheckout(app) {
   app.querySelectorAll('[data-checkout]').forEach(button => {
     button.onclick = async () => {
@@ -20,11 +24,7 @@ function bindCheckout(app) {
       try {
         const checkout = await api(`/api/payments/${encodeURIComponent(button.dataset.checkout)}/checkout`);
         const pix = checkout.pix;
-        box.innerHTML = `<button type="button" class="checkout-close" aria-label="Fechar">×</button>
-          <h2>Pagar fatura</h2><p><strong>${esc(checkout.system)}</strong> — R$ ${money(checkout.value)}</p>
-          ${pix?.encodedImage ? `<img class="pix-qr" src="data:image/png;base64,${esc(pix.encodedImage)}" alt="QR Code Pix">` : ''}
-          ${pix?.payload ? `<label>Pix Copia e Cola</label><textarea readonly>${esc(pix.payload)}</textarea><button type="button" data-copy-pix>Copiar código Pix</button>` : ''}
-          ${checkout.invoiceUrl ? `<a class="payment-link" href="${esc(checkout.invoiceUrl)}" target="_blank" rel="noopener noreferrer">Outros métodos de pagamento</a>` : ''}`;
+        box.innerHTML = `<button type="button" class="checkout-close" aria-label="Fechar">×</button><h2>Pagar cobrança do GateGuard</h2><p><strong>${esc(checkout.system)}</strong> — R$ ${money(checkout.value)}</p>${pix?.encodedImage ? `<img class="pix-qr" src="data:image/png;base64,${esc(pix.encodedImage)}" alt="QR Code Pix">` : ''}${pix?.payload ? `<label>Pix Copia e Cola</label><textarea readonly>${esc(pix.payload)}</textarea><button type="button" data-copy-pix>Copiar código Pix</button>` : ''}${checkout.invoiceUrl ? `<a class="payment-link" href="${esc(checkout.invoiceUrl)}" target="_blank" rel="noopener noreferrer">Outros métodos de pagamento</a>` : ''}`;
         box.querySelector('.checkout-close').onclick = () => { box.hidden = true; };
         const copy = box.querySelector('[data-copy-pix]');
         if (copy) copy.onclick = async () => { await navigator.clipboard.writeText(pix.payload); copy.textContent = 'Código copiado'; };
@@ -37,22 +37,16 @@ function bindCheckout(app) {
 }
 
 export async function paymentsScreen(app) {
-  const administrator = state.session.user.perfil === 'admin' && state.session.system.id === 'SIS_0000';
+  const platformAdmin = state.session.user.perfil === 'admin' && state.session.system.id === 'SIS_0000';
   app.innerHTML = shell(`<div class="panel">
-    ${administrator ? `<form id="plan-form" class="add-form">
-      <h2 id="plan-form-title">Cadastrar plano mensal</h2>
-      <select name="system" required><option value="">Carregando sistemas...</option></select>
-      <input name="name" placeholder="Cliente" required><input name="cpfCnpj" placeholder="CPF/CNPJ" required>
-      <input name="email" type="email" placeholder="E-mail"><input name="value" type="number" min="5" step=".01" placeholder="Mensalidade" required>
-      <input name="nextDueDate" type="date" required><button>Salvar plano</button><button type="button" id="cancel-edit" hidden>Cancelar edição</button>
-    </form><form id="extra-form" class="add-form">
-      <h2>Adicionar serviço extra</h2><select name="system" required><option value="">Carregando sistemas...</option></select>
-      <input name="name" placeholder="Cliente" required><input name="cpfCnpj" placeholder="CPF/CNPJ" required><input name="email" type="email" placeholder="E-mail">
-      <input name="serviceDescription" placeholder="Descrição do serviço" required><input name="value" type="number" min="5" step=".01" placeholder="Valor único" required>
-      <input name="dueDate" type="date" required><button>Gerar fatura avulsa</button>
-    </form>` : '<div class="notice">Aqui você acompanha seu plano mensal e paga as faturas disponíveis.</div>'}
-    <p id="pay-error" class="error"></p><div id="plans">Carregando...</div><div id="payment-history"></div><div id="payment-checkout" class="payment-checkout" hidden></div>
-  </div>`, 'Sistema de Pagamento');
+    <div class="notice"><strong>Dois contextos financeiros separados.</strong><p><b>Operações dos compradores</b> são pagamentos processados para o site da organização. <b>Cobranças GateGuard</b> são mensalidades e serviços cobrados pelo GateGuard à organização. Compradores do site não acessam este painel.</p></div>
+    ${platformAdmin ? `<form id="plan-form" class="add-form"><h2 id="plan-form-title">Cobrar mensalidade GateGuard</h2><select name="system" required><option value="">Carregando organizações...</option></select><input name="name" placeholder="Organização" required><input name="cpfCnpj" placeholder="CPF/CNPJ" required><input name="email" type="email" placeholder="E-mail financeiro"><input name="value" type="number" min="5" step=".01" placeholder="Mensalidade" required><input name="nextDueDate" type="date" required><button>Salvar mensalidade</button><button type="button" id="cancel-edit" hidden>Cancelar edição</button></form>
+      <form id="extra-form" class="add-form"><h2>Cobrar serviço adicional GateGuard</h2><select name="system" required><option value="">Carregando organizações...</option></select><input name="name" placeholder="Organização" required><input name="cpfCnpj" placeholder="CPF/CNPJ" required><input name="email" type="email" placeholder="E-mail financeiro"><input name="serviceDescription" placeholder="Descrição do serviço" required><input name="value" type="number" min="5" step=".01" placeholder="Valor" required><input name="dueDate" type="date" required><button>Gerar cobrança</button></form>` : ''}
+    <p id="pay-error" class="error"></p>
+    <section class="sis"><div class="sis-head"><div><h2>Operações dos compradores do site</h2><p>Visão detalhada para suporte, conciliação, análise de estornos e acompanhamento de eventos processados pela API.</p></div></div><div id="site-payment-history">Carregando...</div></section>
+    <section class="sis"><div class="sis-head"><div><h2>Cobranças do GateGuard à organização</h2><p>Mensalidade da plataforma e serviços adicionais contratados pela organização.</p></div></div><div id="gateguard-billing">Carregando...</div></section>
+    <div id="payment-checkout" class="payment-checkout" hidden></div>
+  </div>`, 'Central Financeira');
   bindShell();
 
   const form = app.querySelector('#plan-form');
@@ -63,20 +57,18 @@ export async function paymentsScreen(app) {
     form.nextDueDate.value = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
     extraForm.dueDate.value = form.nextDueDate.value;
     try {
-      const data = await api('/api/systems');
-      const options = '<option value="">Selecione um sistema</option>' + data.systems.filter(sis => sis.id !== 'SIS_0000').map(sis => `<option value="${esc(sis.id)}">${esc(sis.id)} — ${esc(sis.name)}</option>`).join('');
-      form.system.innerHTML = options; extraForm.system.innerHTML = options;
+      const data = await api('/api/sites');
+      const options = '<option value="">Selecione uma organização</option>' + data.sites.filter(site => site.id !== 'SIS_0000').map(site => `<option value="${esc(site.id)}">${esc(site.id)} — ${esc(site.name)}</option>`).join('');
+      form.system.innerHTML = options;
+      extraForm.system.innerHTML = options;
     } catch (error) { app.querySelector('#pay-error').textContent = error.message; }
     form.onsubmit = async event => {
       event.preventDefault();
       const body = Object.fromEntries(new FormData(form));
-      body.system = form.system.value;
       body.value = Number(body.value);
       const id = form.dataset.planId;
-      try {
-        await api(id ? `/api/payments/plans/${encodeURIComponent(id)}` : '/api/payments', { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });
-        await paymentsScreen(app);
-      } catch (error) { app.querySelector('#pay-error').textContent = error.message; }
+      try { await api(id ? `/api/payments/plans/${encodeURIComponent(id)}` : '/api/payments', { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) }); await paymentsScreen(app); }
+      catch (error) { app.querySelector('#pay-error').textContent = error.message; }
     };
     extraForm.onsubmit = async event => {
       event.preventDefault();
@@ -90,28 +82,29 @@ export async function paymentsScreen(app) {
 
   try {
     const data = await api('/api/payments');
+    const history = data.history || [];
+    const sitePayments = history.filter(payment => payment.category === 'SITE_BUYER_PAYMENT' || String(payment.event || '').startsWith('SITE_PAYMENT'));
+    const gateGuardHistory = history.filter(payment => !sitePayments.includes(payment));
+    app.querySelector('#site-payment-history').innerHTML = sitePayments.map(payment => paymentRow(payment, platformAdmin)).join('') || '<p>Nenhuma operação de comprador registrada.</p>';
+
     const plans = data.plans || [];
     const extras = data.extras || [];
-    const history = data.history || [];
-    app.querySelector('#payment-history').innerHTML = `<section class="sis"><h2>Histórico financeiro</h2>${history.map(payment => `<div class="user"><strong>${esc(payment.system)}</strong><span>Vencimento: ${esc(payment.dueDate || '—')}</span><span>R$ ${money(payment.value)}</span><span class="badge">${esc(payment.status)}</span></div>`).join('') || '<p>Nenhum pagamento registrado no histórico.</p>'}</section>`;
-    app.querySelector('#plans').innerHTML = `${plans.map(plan => `<section class="sis">
-      <div class="sis-head"><div><h2>${esc(plan.externalReference)}</h2><p>Plano mensal — R$ ${money(plan.value)} | Próximo vencimento: ${esc(plan.nextDueDate || '—')} | ${esc(plan.status)}</p></div>
-      ${administrator ? `<button type="button" data-edit-plan="${esc(plan.id)}" data-value="${esc(plan.value)}" data-due="${esc(plan.nextDueDate)}">Editar plano</button>` : ''}</div>
-      <div class="table"><h3>Faturas</h3>${(plan.payments?.data || []).map(payment => `<div class="user"><strong>${esc(payment.dueDate)}</strong><span>R$ ${money(payment.value)}</span><span class="badge">${esc(payment.status)}</span>${payable.has(payment.status) ? `<button type="button" data-checkout="${esc(payment.id)}">Pagar agora</button>` : ''}</div>`).join('') || '<p>Nenhuma fatura gerada ainda.</p>'}</div>
-    </section>`).join('') || '<p>Nenhum plano mensal cadastrado.</p>'}
-    <section class="sis"><h2>Serviços extras</h2>${extras.map(payment => `<div class="user"><strong>${esc(String(payment.description || '').replace('SERVIÇO EXTRA — ', ''))}</strong><span>${esc(payment.externalReference)}</span><span>Vencimento: ${esc(payment.dueDate)}</span><span>R$ ${money(payment.value)}</span><span class="badge">${esc(payment.status)}</span>${payable.has(payment.status) ? `<button type="button" data-checkout="${esc(payment.id)}">Pagar agora</button>` : ''}</div>`).join('') || '<p>Nenhum serviço extra faturado.</p>'}</section>`;
+    app.querySelector('#gateguard-billing').innerHTML = `${plans.map(plan => `<article class="table"><div class="sis-head"><div><h3>${esc(plan.externalReference)}</h3><p>Mensalidade — R$ ${money(plan.value)} | Próximo vencimento: ${esc(plan.nextDueDate || '—')} | ${esc(plan.status)}</p></div>${platformAdmin ? `<button type="button" data-edit-plan="${esc(plan.id)}" data-value="${esc(plan.value)}" data-due="${esc(plan.nextDueDate)}">Editar</button>` : ''}</div>${(plan.payments?.data || []).map(payment => `<div class="user"><strong>${esc(payment.dueDate)}</strong><span>R$ ${money(payment.value)}</span><span class="badge">${esc(payment.status)}</span>${payable.has(payment.status) ? `<button type="button" data-checkout="${esc(payment.id)}">Pagar agora</button>` : ''}</div>`).join('') || '<p>Nenhuma fatura.</p>'}</article>`).join('')}${extras.map(payment => `<div class="user"><strong>${esc(String(payment.description || '').replace('SERVIÇO EXTRA — ', ''))}</strong><span>${esc(payment.externalReference)}</span><span>R$ ${money(payment.value)}</span><span class="badge">${esc(payment.status)}</span>${payable.has(payment.status) ? `<button type="button" data-checkout="${esc(payment.id)}">Pagar agora</button>` : ''}</div>`).join('')}${!plans.length && !extras.length ? gateGuardHistory.map(payment => paymentRow(payment, platformAdmin)).join('') || '<p>Nenhuma cobrança GateGuard registrada.</p>' : ''}`;
     bindCheckout(app);
     if (form) app.querySelectorAll('[data-edit-plan]').forEach(button => {
       button.onclick = () => {
         form.dataset.planId = button.dataset.editPlan;
-        form.system.value = button.closest('.sis').querySelector('h2').textContent;
+        form.system.value = button.closest('.table').querySelector('h3').textContent;
         form.system.disabled = true;
         form.name.required = false; form.cpfCnpj.required = false;
         form.value.value = button.dataset.value; form.nextDueDate.value = button.dataset.due;
-        app.querySelector('#plan-form-title').textContent = 'Editar plano mensal';
+        app.querySelector('#plan-form-title').textContent = 'Editar mensalidade GateGuard';
         app.querySelector('#cancel-edit').hidden = false;
         form.scrollIntoView({ behavior: 'smooth' });
       };
     });
-  } catch (error) { app.querySelector('#plans').innerHTML = `<p class="error">${esc(error.message)}</p>`; }
+  } catch (error) {
+    app.querySelector('#site-payment-history').innerHTML = `<p class="error">${esc(error.message)}</p>`;
+    app.querySelector('#gateguard-billing').innerHTML = '';
+  }
 }
