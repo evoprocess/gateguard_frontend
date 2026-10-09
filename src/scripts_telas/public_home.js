@@ -19,31 +19,26 @@ export function publicHomeScreen(app, openLogin = false) {
       </header>
       <main>
         <section id="inicio" class="public-hero public-screen" data-public-screen>
-          <div class="hero-copy"><span class="public-eyebrow">PAGAMENTOS PARA SITES</span><h1>Aceite pagamentos<br><em>no seu site</em></h1><p>Gerencie pagamentos de mensalidades, serviços e vendas de produtos em uma única integração. O GateGuard confirma cada operação para que seu site libere o acesso, o atendimento ou a compra com segurança.</p>
+          <div class="hero-copy"><span class="public-eyebrow">PAGAMENTOS PARA SITES</span><h1>Leve pagamentos<br><em>para o seu site</em></h1><p>Empresas que ainda não recebem pelo próprio site passam a cobrar mensalidades, serviços e vendas de produtos. Cada negócio integra o GateGuard e habilita os meios de pagamento adequados à sua operação.</p>
             <div class="hero-actions"><a class="button button-primary" href="${contactLink}">Adicionar pagamentos</a><button class="text-link" data-scroll="integracao">Entender a integração <span>↓</span></button></div>
             <div class="trust-row"><span>✓ API segura</span><span>✓ Asaas isolado</span><span>✓ Credenciais fora do navegador</span></div>
           </div>
           <div class="hero-visual" aria-label="Exemplos de mensalidade, produto e serviço pagos com GateGuard">
             <div class="payment-showcase">
-              <img class="payment-scene" src="${PUBLIC_IMAGES_URL}/hero-payment-professional.jpg" alt="Profissional gerenciando pagamentos pelo computador">
-              <div class="payment-showcase-head"><img src="${PUBLIC_IMAGES_URL}/gateguard_logo.png" alt="GateGuard"><span><i></i> Operações confirmadas</span></div>
-              <div class="payment-flow" aria-hidden="true"><i></i><i></i><i></i></div>
-              <article class="payment-example payment-example-internet">
-                <img class="payment-example-photo" src="${PUBLIC_IMAGES_URL}/payment-internet.jpg" alt="Roteador de internet por fibra">
-                <div><small>MENSALIDADE</small><h3>Internet Fibra</h3><p>Plano mensal · PIX</p></div>
-                <div class="payment-example-value"><strong>R$ 99,90</strong><span>CONFIRMADO</span></div>
+              <div class="payment-showcase-head"><img src="${PUBLIC_IMAGES_URL}/gateguard_logo.png" alt="GateGuard"><span><i></i> Novos sites recebendo pagamentos</span></div>
+              <article class="business-site business-site-internet">
+                <img class="business-site-photo" src="${PUBLIC_IMAGES_URL}/business-internet.jpg" alt="Gestor de um provedor configurando pagamentos no site da empresa">
+                <div class="business-site-copy"><small>PROVEDOR DE INTERNET</small><h3>Mensalidades no próprio site</h3><p>O gestor habilita a cobrança recorrente para seus assinantes.</p><div class="business-payment-toggle"><span><i></i> Pagamentos no site</span><b>ATIVO</b></div></div>
               </article>
-              <article class="payment-example payment-example-product">
-                <img class="payment-example-photo" src="${PUBLIC_IMAGES_URL}/payment-shoe.jpg" alt="Tênis azul e branco">
-                <div><small>VENDA DE PRODUTO</small><h3>Tênis Urban</h3><p>Compra online · Cartão</p></div>
-                <div class="payment-example-value"><strong>R$ 289,90</strong><span>APROVADO</span></div>
+              <article class="business-site business-site-products">
+                <img class="business-site-photo" src="${PUBLIC_IMAGES_URL}/business-shoe-store.jpg" alt="Gestora de uma loja de calçados configurando pagamentos no site da empresa">
+                <div class="business-site-copy"><small>LOJA DE CALÇADOS</small><h3>Vendas de produtos online</h3><p>A empresa transforma o catálogo em um canal de vendas.</p><div class="business-payment-toggle"><span><i></i> Pagamentos no site</span><b>ATIVO</b></div></div>
               </article>
-              <article class="payment-example payment-example-service">
-                <img class="payment-example-photo" src="${PUBLIC_IMAGES_URL}/payment-barber.jpg" alt="Serviço profissional de barbearia">
-                <div><small>SERVIÇO</small><h3>Corte + Barba</h3><p>Agendamento · PIX</p></div>
-                <div class="payment-example-value"><strong>R$ 75,00</strong><span>CONFIRMADO</span></div>
+              <article class="business-site business-site-services">
+                <img class="business-site-photo" src="${PUBLIC_IMAGES_URL}/business-barbershop.jpg" alt="Gestor de uma barbearia configurando pagamentos no site da empresa">
+                <div class="business-site-copy"><small>BARBEARIA</small><h3>Serviços pagos pelo site</h3><p>O estabelecimento recebe antes ou depois do atendimento.</p><div class="business-payment-toggle"><span><i></i> Pagamentos no site</span><b>ATIVO</b></div></div>
               </article>
-              <p class="payment-showcase-note"><b>GateGuard</b><span>Pagamento recebido com segurança</span></p>
+              <p class="payment-showcase-note"><b>3 empresas diferentes</b><span>Um único GateGuard para habilitar pagamentos em cada site.</span></p>
             </div>
           </div>
         </section>
