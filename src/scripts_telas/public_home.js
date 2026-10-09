@@ -27,15 +27,15 @@ export function publicHomeScreen(app, openLogin = false) {
             <div class="payment-showcase">
               <div class="payment-showcase-head"><img src="${PUBLIC_IMAGES_URL}/gateguard_logo.png" alt="GateGuard"><span><i></i> Novos sites recebendo pagamentos</span></div>
               <article class="business-site business-site-internet">
-                <img class="business-site-photo" src="${PUBLIC_IMAGES_URL}/business-internet.jpg" alt="Gestor de um provedor configurando pagamentos no site da empresa">
+                <div class="business-site-media"><img class="business-site-photo" src="${PUBLIC_IMAGES_URL}/business-internet.jpg" alt="Gestor de um provedor configurando pagamentos no site da empresa"><img class="business-offer-photo" src="${PUBLIC_IMAGES_URL}/payment-internet.jpg" alt="Roteador e conexão de internet oferecidos pelo provedor"><span>MENSALIDADE</span></div>
                 <div class="business-site-copy"><small>PROVEDOR DE INTERNET</small><h3>Mensalidades no próprio site</h3><p>O gestor habilita a cobrança recorrente para seus assinantes.</p><div class="business-payment-toggle"><span><i></i> Pagamentos no site</span><b>ATIVO</b></div></div>
               </article>
               <article class="business-site business-site-products">
-                <img class="business-site-photo" src="${PUBLIC_IMAGES_URL}/business-shoe-store.jpg" alt="Gestora de uma loja de calçados configurando pagamentos no site da empresa">
+                <div class="business-site-media"><img class="business-site-photo" src="${PUBLIC_IMAGES_URL}/business-shoe-store.jpg" alt="Gestora de uma loja de calçados configurando pagamentos no site da empresa"><img class="business-offer-photo" src="${PUBLIC_IMAGES_URL}/payment-shoe.jpg" alt="Calçado vendido pela loja em seu site"><span>PRODUTO</span></div>
                 <div class="business-site-copy"><small>LOJA DE CALÇADOS</small><h3>Vendas de produtos online</h3><p>A empresa transforma o catálogo em um canal de vendas.</p><div class="business-payment-toggle"><span><i></i> Pagamentos no site</span><b>ATIVO</b></div></div>
               </article>
               <article class="business-site business-site-services">
-                <img class="business-site-photo" src="${PUBLIC_IMAGES_URL}/business-barbershop.jpg" alt="Gestor de uma barbearia configurando pagamentos no site da empresa">
+                <div class="business-site-media"><img class="business-site-photo" src="${PUBLIC_IMAGES_URL}/business-barbershop.jpg" alt="Gestor de uma barbearia configurando pagamentos no site da empresa"><img class="business-offer-photo" src="${PUBLIC_IMAGES_URL}/payment-barber.jpg" alt="Serviço de barbearia oferecido pelo estabelecimento"><span>SERVIÇO</span></div>
                 <div class="business-site-copy"><small>BARBEARIA</small><h3>Serviços pagos pelo site</h3><p>O estabelecimento recebe antes ou depois do atendimento.</p><div class="business-payment-toggle"><span><i></i> Pagamentos no site</span><b>ATIVO</b></div></div>
               </article>
               <p class="payment-showcase-note"><b>3 empresas diferentes</b><span>Um único GateGuard para habilitar pagamentos em cada site.</span></p>

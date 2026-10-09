@@ -9,22 +9,21 @@
 .parker-launcher {
   position: relative;
   display: grid;
-  width: 60px;
-  height: 60px;
-  padding: 6px;
-  border: 1px solid #76bdf0;
-  border-radius: 18px;
-  background: linear-gradient(145deg, #fff, #ddecf7);
-  box-shadow: 0 12px 30px #09234445, inset 0 1px #fff;
+  width: 62px;
+  height: 62px;
+  padding: 2px;
+  border: 0;
+  background: transparent;
+  filter: drop-shadow(0 10px 12px #09234455);
   cursor: pointer;
   place-items: center;
-  transition: border-color .25s, box-shadow .25s, transform .25s;
+  transition: filter .25s, transform .25s;
 }
 
 .parker-launcher::before {
   position: absolute;
   z-index: -1;
-  inset: 9px;
+  inset: 12px;
   border-radius: 50%;
   background: #168cff45;
   box-shadow: 0 0 24px #168cff90;
@@ -35,17 +34,16 @@
 
 .parker-launcher img {
   display: block;
-  width: 46px;
-  height: 46px;
+  width: 58px;
+  height: 58px;
   object-fit: contain;
   transition: filter .25s, transform .25s;
 }
 
 .parker-launcher:hover,
 .parker-launcher:focus-visible {
-  border-color: #168cff;
-  box-shadow: 0 16px 38px #096fc45c, 0 0 0 4px #168cff1f;
   outline: 0;
+  filter: drop-shadow(0 14px 16px #096fc477);
   transform: translateY(-4px) scale(1.04);
 }
 
@@ -53,46 +51,6 @@
 .parker-launcher:focus-visible::before { opacity: 1; transform: scale(1.18); }
 .parker-launcher:hover img,
 .parker-launcher:focus-visible img { filter: brightness(1.08) saturate(1.12); transform: rotate(-4deg) scale(1.05); }
-
-.parker-alert {
-  position: absolute;
-  z-index: 3;
-  top: -8px;
-  right: -7px;
-  display: grid;
-  width: 23px;
-  height: 23px;
-  border: 3px solid #fff;
-  border-radius: 50%;
-  background: #0874cc;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 900;
-  place-items: center;
-  box-shadow: 0 5px 12px #082b5060;
-}
-
-.parker-hint {
-  position: absolute;
-  right: 70px;
-  bottom: 14px;
-  width: max-content;
-  padding: 9px 13px;
-  border: 1px solid #bcd9ef;
-  border-radius: 12px 12px 2px;
-  background: #fff;
-  color: #173653;
-  font-size: 10px;
-  font-weight: 800;
-  box-shadow: 0 9px 25px #0a294532;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(8px);
-  transition: opacity .2s, transform .2s;
-}
-
-.parker-assistant:hover .parker-hint,
-.parker-assistant:focus-within .parker-hint { opacity: 1; transform: translateX(0); }
 
 .parker-panel {
   position: absolute;
@@ -226,9 +184,7 @@
 .parker-contact:focus-visible { background: #065fa7; outline: 3px solid #8dccfa; outline-offset: 2px; }
 .parker-back { margin-top: 11px; border: 0; background: transparent; color: #58758e; cursor: pointer; font-size: 10px; text-decoration: underline; }
 .parker-panel footer { padding: 8px 14px; border-top: 1px solid #dce8f1; background: #f3f8fc; color: #76899a; font-size: 8px; text-align: center; }
-.is-open .parker-hint,
-.is-open .parker-alert { display: none; }
-.is-open .parker-launcher { border-color: #168cff; background: linear-gradient(145deg, #e8f6ff, #c9e8fa); }
+.is-open .parker-launcher { filter: drop-shadow(0 12px 16px #096fc477); }
 
 @keyframes parker-open {
   from { opacity: 0; transform: translateY(14px) scale(.94); }
@@ -255,9 +211,8 @@
 
 @media (max-width: 600px) {
   .parker-assistant { right: 10px; bottom: 10px; }
-  .parker-launcher { width: 54px; height: 54px; border-radius: 16px; }
-  .parker-launcher img { width: 41px; height: 41px; }
-  .parker-hint { display: none; }
+  .parker-launcher { width: 56px; height: 56px; }
+  .parker-launcher img { width: 52px; height: 52px; }
   .parker-panel { right: 0; bottom: 66px; }
   .parker-character { height: 155px; }
   .parker-avatar { width: 174px; }
@@ -272,7 +227,6 @@
   .parker-launcher,
   .parker-launcher::before,
   .parker-launcher img,
-  .parker-hint,
   .parker-topics button { transition: none; }
   .parker-launcher:hover,
   .parker-launcher:focus-visible,

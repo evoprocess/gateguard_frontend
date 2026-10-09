@@ -53,9 +53,7 @@ export function mountParker({ email, shieldUrl, avatarBodyUrl, avatarArmUrl }) {
       </div>
       <footer>Atendimento direcionado com segurança pelo GateGuard.</footer>
     </section>
-    <span class="parker-hint">Conversar com Parker</span>
     <button type="button" class="parker-launcher" aria-label="Conversar com Parker" aria-controls="parker-panel" aria-expanded="false">
-      <span class="parker-alert">1</span>
       <img src="${shieldUrl}" alt="Escudo GateGuard">
     </button>`;
 
