@@ -25,23 +25,25 @@ export function publicHomeScreen(app, openLogin = false) {
           </div>
           <div class="hero-visual" aria-label="Exemplos de mensalidade, produto e serviço pagos com GateGuard">
             <div class="payment-showcase">
-              <div class="payment-showcase-head"><img src="${PUBLIC_IMAGES_URL}/gateguard_logo.png" alt="GateGuard"><span><i></i> Pagamentos confirmados</span></div>
+              <img class="payment-scene" src="${PUBLIC_IMAGES_URL}/hero-payment-professional.jpg" alt="Profissional gerenciando pagamentos pelo computador">
+              <div class="payment-showcase-head"><img src="${PUBLIC_IMAGES_URL}/gateguard_logo.png" alt="GateGuard"><span><i></i> Operações confirmadas</span></div>
+              <div class="payment-flow" aria-hidden="true"><i></i><i></i><i></i></div>
               <article class="payment-example payment-example-internet">
-                <span class="payment-example-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="13" width="16" height="6" rx="2"/><path d="M8 10a6 6 0 0 1 8 0M10.5 7.5a10 10 0 0 1 3 0M8 16h.01M16 16h.01"/></svg></span>
-                <div><small>MENSALIDADE</small><h3>Internet Fibra 500 Mega</h3><p>Plano mensal de internet</p></div>
-                <div class="payment-example-value"><strong>R$ 99,90</strong><span>PIX</span></div>
+                <img class="payment-example-photo" src="${PUBLIC_IMAGES_URL}/payment-internet.jpg" alt="Roteador de internet por fibra">
+                <div><small>MENSALIDADE</small><h3>Internet Fibra</h3><p>Plano mensal · PIX</p></div>
+                <div class="payment-example-value"><strong>R$ 99,90</strong><span>CONFIRMADO</span></div>
               </article>
               <article class="payment-example payment-example-product">
-                <span class="payment-example-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 15c3.5-.4 5.4-2.2 6.4-6.8l3.1 4.2c1.7 2.2 3.3 2.7 6.5 2.8V19H4z"/><path d="M10.8 12.2l2.4-1.5M12.4 14l2.3-1.3"/></svg></span>
-                <div><small>VENDA DE PRODUTO</small><h3>Tênis Urban</h3><p>Compra de sapato no site</p></div>
-                <div class="payment-example-value"><strong>R$ 289,90</strong><span>CARTÃO</span></div>
+                <img class="payment-example-photo" src="${PUBLIC_IMAGES_URL}/payment-shoe.jpg" alt="Tênis azul e branco">
+                <div><small>VENDA DE PRODUTO</small><h3>Tênis Urban</h3><p>Compra online · Cartão</p></div>
+                <div class="payment-example-value"><strong>R$ 289,90</strong><span>APROVADO</span></div>
               </article>
               <article class="payment-example payment-example-service">
-                <span class="payment-example-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="m8.5 15.5 8-10M15.5 15.5l-8-10M10 12l4 5"/></svg></span>
-                <div><small>SERVIÇO</small><h3>Corte + Barba</h3><p>Atendimento em barbearia</p></div>
-                <div class="payment-example-value"><strong>R$ 75,00</strong><span>PIX</span></div>
+                <img class="payment-example-photo" src="${PUBLIC_IMAGES_URL}/payment-barber.jpg" alt="Serviço profissional de barbearia">
+                <div><small>SERVIÇO</small><h3>Corte + Barba</h3><p>Agendamento · PIX</p></div>
+                <div class="payment-example-value"><strong>R$ 75,00</strong><span>CONFIRMADO</span></div>
               </article>
-              <p class="payment-showcase-note"><b>GateGuard</b> acompanha cada pagamento até a confirmação.</p>
+              <p class="payment-showcase-note"><b>GateGuard</b><span>Pagamento recebido com segurança</span></p>
             </div>
           </div>
         </section>

@@ -124,19 +124,20 @@
 
 .parker-character {
   position: relative;
-  height: 175px;
+  height: 190px;
   overflow: hidden;
   border-bottom: 1px solid #cce0ef;
   background:
-    radial-gradient(circle at 50% 55%, #56c7ff55, transparent 34%),
+    radial-gradient(circle at 50% 58%, #56c7ff5c, transparent 35%),
+    linear-gradient(90deg, transparent 49.8%, #48a9e71c 50%, transparent 50.2%),
     linear-gradient(180deg, #071a35, #0b3964);
 }
 
 .parker-character::after {
   position: absolute;
-  right: 20%;
-  bottom: 9px;
-  left: 20%;
+  right: 24%;
+  bottom: 8px;
+  left: 24%;
   height: 14px;
   border-radius: 50%;
   background: #38cfff38;
@@ -144,8 +145,66 @@
   content: "";
 }
 
-.parker-character canvas { position: relative; z-index: 1; display: block; width: 100%; height: 100%; }
-.parker-3d-unavailable .parker-character::before { position: absolute; z-index: 2; inset: 0; display: grid; color: #c9e8ff; content: "Visualização 3D indisponível"; font-size: 10px; place-items: center; }
+.parker-avatar {
+  position: absolute;
+  z-index: 1;
+  bottom: 4px;
+  left: 50%;
+  width: 210px;
+  aspect-ratio: 721 / 631;
+  filter: drop-shadow(0 11px 13px #0007);
+  transform: translateX(-50%);
+  animation: parker-idle 3.2s ease-in-out infinite;
+}
+
+.parker-avatar-body,
+.parker-avatar-arm {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.parker-avatar-arm {
+  z-index: 2;
+  transform-origin: 63% 45%;
+  animation: parker-wave 4.8s ease-in-out infinite;
+}
+
+.parker-eye {
+  position: absolute;
+  z-index: 3;
+  top: 20.5%;
+  width: 7.1%;
+  height: 9.5%;
+  border-bottom: 2px solid #142f54;
+  border-radius: 52% 52% 48% 48%;
+  background: linear-gradient(180deg, #e8f1f7, #fff 70%);
+  opacity: 0;
+  transform: scaleY(.12);
+  transform-origin: center;
+  animation: parker-blink 5.6s linear infinite;
+}
+
+.parker-eye-left { left: 45.2%; }
+.parker-eye-right { left: 57.8%; }
+
+.parker-status {
+  position: absolute;
+  z-index: 4;
+  right: 10px;
+  bottom: 10px;
+  padding: 5px 7px;
+  border: 1px solid #66c9ff61;
+  border-radius: 8px;
+  background: #06172bcf;
+  color: #8bd7ff;
+  font-size: 6px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
 
 .parker-panel-body { min-height: 222px; padding: 15px 17px; background: linear-gradient(180deg, #f7fbff, #fff); }
 .parker-message { margin: 0 0 12px; padding: 11px 12px; border: 1px solid #d4e5f2; border-radius: 4px 14px 14px; background: #fff; color: #344f68; font-size: 11px; line-height: 1.5; box-shadow: 0 7px 18px #1235530a; }
@@ -176,18 +235,40 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+@keyframes parker-idle {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-.5deg); }
+  50% { transform: translateX(-50%) translateY(-4px) rotate(.6deg); }
+}
+
+@keyframes parker-wave {
+  0%, 68%, 100% { transform: rotate(0); }
+  75% { transform: rotate(-8deg); }
+  82% { transform: rotate(6deg); }
+  89% { transform: rotate(-5deg); }
+  95% { transform: rotate(3deg); }
+}
+
+@keyframes parker-blink {
+  0%, 43%, 46%, 49%, 100% { opacity: 0; transform: scaleY(.12); }
+  44.2%, 47.2% { opacity: 1; transform: scaleY(1); }
+}
+
 @media (max-width: 600px) {
   .parker-assistant { right: 10px; bottom: 10px; }
   .parker-launcher { width: 54px; height: 54px; border-radius: 16px; }
   .parker-launcher img { width: 41px; height: 41px; }
   .parker-hint { display: none; }
   .parker-panel { right: 0; bottom: 66px; }
-  .parker-character { height: 140px; }
+  .parker-character { height: 155px; }
+  .parker-avatar { width: 174px; }
   .parker-panel-body { min-height: 215px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .parker-panel { animation: none; }
+  .parker-avatar,
+  .parker-avatar-arm,
+  .parker-eye { animation: none; }
   .parker-launcher,
   .parker-launcher::before,
   .parker-launcher img,
