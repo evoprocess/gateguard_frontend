@@ -13,7 +13,7 @@ const topics = {
   }
 };
 
-export function mountParker({ email, imageUrl }) {
+export function mountParker({ email, shieldUrl }) {
   if (document.querySelector('[data-parker]')) return;
 
   const assistant = document.createElement('aside');
@@ -22,9 +22,10 @@ export function mountParker({ email, imageUrl }) {
   assistant.innerHTML = `
     <section class="parker-panel" id="parker-panel" role="dialog" aria-label="Atendimento do Parker" hidden>
       <header class="parker-panel-header">
-        <div class="parker-identity"><img src="${imageUrl}" alt=""><span><b>Parker</b><small><i></i> Guardião GateGuard</small></span></div>
+        <div class="parker-identity"><img src="${shieldUrl}" alt=""><span><b>Parker</b><small><i></i> Guardião GateGuard</small></span></div>
         <button type="button" class="parker-close" aria-label="Fechar atendimento">&times;</button>
       </header>
+      <div class="parker-character"><canvas aria-label="Parker, mascote 3D guardião do GateGuard"></canvas></div>
       <div class="parker-panel-body" aria-live="polite">
         <div data-parker-intro>
           <p class="parker-message">Olá! Eu sou o Parker. Posso direcionar você para o contato certo.</p>
@@ -44,10 +45,10 @@ export function mountParker({ email, imageUrl }) {
       </div>
       <footer>Atendimento direcionado com segurança pelo GateGuard.</footer>
     </section>
-    <span class="parker-hint">Olá! Posso ajudar?</span>
+    <span class="parker-hint">Conversar com Parker</span>
     <button type="button" class="parker-launcher" aria-label="Conversar com Parker" aria-controls="parker-panel" aria-expanded="false">
       <span class="parker-alert">1</span>
-      <img src="${imageUrl}" alt="Parker, mascote guardião do GateGuard">
+      <img src="${shieldUrl}" alt="Escudo GateGuard">
     </button>`;
 
   document.body.append(assistant);
@@ -57,11 +58,28 @@ export function mountParker({ email, imageUrl }) {
   const intro = assistant.querySelector('[data-parker-intro]');
   const response = assistant.querySelector('[data-parker-response]');
   const contact = assistant.querySelector('[data-parker-contact]');
+  let parker3D;
+  let loading3D;
+
+  const ensureParker3D = () => {
+    if (parker3D) return Promise.resolve(parker3D);
+    if (loading3D) return loading3D;
+    loading3D = import('./parker-3d.js')
+      .then(({ createParker3D }) => {
+        parker3D = createParker3D(assistant.querySelector('.parker-character canvas'), shieldUrl);
+        parker3D.setActive(!panel.hidden);
+        return parker3D;
+      })
+      .catch(() => { assistant.classList.add('parker-3d-unavailable'); });
+    return loading3D;
+  };
 
   const setOpen = open => {
     panel.hidden = !open;
     launcher.setAttribute('aria-expanded', String(open));
     assistant.classList.toggle('is-open', open);
+    if (open) void ensureParker3D();
+    parker3D?.setActive(open);
     if (open) closeButton.focus();
   };
 

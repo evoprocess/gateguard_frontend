@@ -19,24 +19,29 @@ export function publicHomeScreen(app, openLogin = false) {
       </header>
       <main>
         <section id="inicio" class="public-hero public-screen" data-public-screen>
-          <div class="hero-copy"><span class="public-eyebrow">PAGAMENTOS PARA SITES</span><h1>Aceite pagamentos<br><em>no seu site</em></h1><p>Receba por vendas e mensalidades diretamente no seu site. O GateGuard valida a confirmação do pagamento para que o site libere a assinatura ou conclua a venda com segurança.</p>
+          <div class="hero-copy"><span class="public-eyebrow">PAGAMENTOS PARA SITES</span><h1>Aceite pagamentos<br><em>no seu site</em></h1><p>Gerencie pagamentos de mensalidades, serviços e vendas de produtos em uma única integração. O GateGuard confirma cada operação para que seu site libere o acesso, o atendimento ou a compra com segurança.</p>
             <div class="hero-actions"><a class="button button-primary" href="${contactLink}">Adicionar pagamentos</a><button class="text-link" data-scroll="integracao">Entender a integração <span>↓</span></button></div>
             <div class="trust-row"><span>✓ API segura</span><span>✓ Asaas isolado</span><span>✓ Credenciais fora do navegador</span></div>
           </div>
-          <div class="hero-visual" aria-label="Exemplo de um site aceitando pagamento com GateGuard">
-            <div class="store-preview">
-              <div class="store-browser"><i></i><i></i><i></i><span>minhaloja.com.br</span></div>
-              <div class="store-nav"><strong>NOVA</strong><span>Produtos&nbsp;&nbsp; Assinaturas&nbsp;&nbsp; Suporte</span><b>◌</b></div>
-              <div class="store-product"><div class="product-art"><i></i><span>N</span></div><div class="product-copy"><small>ASSINATURA DIGITAL</small><h3>Plano Profissional</h3><p>Recursos completos para sua equipe.</p><strong>R$ 49,90 <small>/ mês</small></strong><button type="button">Assinar agora</button></div></div>
-              <div class="store-shade"></div>
-              <div class="checkout-modal">
-                <div class="checkout-brand"><img src="${PUBLIC_IMAGES_URL}/gateguard_logo.png" alt="GateGuard"><div><small>PAGAMENTO SEGURO</small><strong>GateGuard</strong></div><span>🔒</span></div>
-                <div class="checkout-order"><div><small>Plano Profissional</small><span>Assinatura mensal</span></div><strong>R$ 49,90</strong></div>
-                <div class="checkout-methods"><button type="button" class="is-selected">Pix</button><button type="button">Cartão</button></div>
-                <div class="checkout-field"><span>CPF/CNPJ</span><b>•••.•••.•••-••</b></div>
-                <button type="button" class="checkout-pay">Pagar R$ 49,90</button>
-                <p>Pagamento validado para liberar sua assinatura.</p>
-              </div>
+          <div class="hero-visual" aria-label="Exemplos de mensalidade, produto e serviço pagos com GateGuard">
+            <div class="payment-showcase">
+              <div class="payment-showcase-head"><img src="${PUBLIC_IMAGES_URL}/gateguard_logo.png" alt="GateGuard"><span><i></i> Pagamentos confirmados</span></div>
+              <article class="payment-example payment-example-internet">
+                <span class="payment-example-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="13" width="16" height="6" rx="2"/><path d="M8 10a6 6 0 0 1 8 0M10.5 7.5a10 10 0 0 1 3 0M8 16h.01M16 16h.01"/></svg></span>
+                <div><small>MENSALIDADE</small><h3>Internet Fibra 500 Mega</h3><p>Plano mensal de internet</p></div>
+                <div class="payment-example-value"><strong>R$ 99,90</strong><span>PIX</span></div>
+              </article>
+              <article class="payment-example payment-example-product">
+                <span class="payment-example-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 15c3.5-.4 5.4-2.2 6.4-6.8l3.1 4.2c1.7 2.2 3.3 2.7 6.5 2.8V19H4z"/><path d="M10.8 12.2l2.4-1.5M12.4 14l2.3-1.3"/></svg></span>
+                <div><small>VENDA DE PRODUTO</small><h3>Tênis Urban</h3><p>Compra de sapato no site</p></div>
+                <div class="payment-example-value"><strong>R$ 289,90</strong><span>CARTÃO</span></div>
+              </article>
+              <article class="payment-example payment-example-service">
+                <span class="payment-example-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="m8.5 15.5 8-10M15.5 15.5l-8-10M10 12l4 5"/></svg></span>
+                <div><small>SERVIÇO</small><h3>Corte + Barba</h3><p>Atendimento em barbearia</p></div>
+                <div class="payment-example-value"><strong>R$ 75,00</strong><span>PIX</span></div>
+              </article>
+              <p class="payment-showcase-note"><b>GateGuard</b> acompanha cada pagamento até a confirmação.</p>
             </div>
           </div>
         </section>
