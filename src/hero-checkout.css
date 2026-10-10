@@ -1,13 +1,13 @@
 .public-hero {
   grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
   gap: 46px;
-  min-height: 740px;
-  padding-top: 48px;
-  padding-bottom: 84px;
+  min-height: 100svh;
+  padding-top: 88px;
+  padding-bottom: 24px;
 }
 
 .hero-copy h1 { font-size: clamp(50px, 4.7vw, 68px); }
-.hero-visual { min-height: 600px; margin-left: 0; }
+.hero-visual { min-height: clamp(500px, calc(100svh - 150px), 600px); margin-left: 0; }
 .hero-visual::before { inset: 18px -18px -12px 36px; }
 
 .payment-showcase {
@@ -15,8 +15,9 @@
   top: 0;
   right: -18px;
   display: grid;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
   width: min(100%, 680px);
-  height: 600px;
+  height: 100%;
   padding: 76px 16px 62px;
   gap: 10px;
   overflow: hidden;
@@ -87,7 +88,7 @@
   display: grid;
   grid-template-columns: 250px 1fr;
   align-items: stretch;
-  min-height: 147px;
+  min-height: 0;
   padding: 8px;
   gap: 18px;
   border: 1px solid #ffffffdc;
@@ -114,13 +115,14 @@
 .business-site-media {
   position: relative;
   width: 250px;
-  height: 130px;
+  height: 100%;
+  min-height: 0;
 }
 
 .business-site-photo {
   display: block;
   width: 210px;
-  height: 130px;
+  height: 100%;
   border-radius: 13px;
   object-fit: cover;
   box-shadow: 0 8px 18px #102b4229;
@@ -276,7 +278,7 @@
 }
 
 @media (max-width: 850px) {
-  .public-hero { grid-template-columns: 1fr; gap: 0; min-height: auto; }
+  .public-hero { grid-template-columns: 1fr; gap: 0; min-height: auto; padding-top: 100px; padding-bottom: 40px; }
   .hero-visual { min-height: 600px; margin-top: 52px; }
   .payment-showcase { right: 0; width: 100%; }
   .business-site { grid-template-columns: 250px 1fr; }
@@ -286,7 +288,7 @@
 }
 
 @media (max-width: 560px) {
-  .public-hero { padding-top: 42px; }
+  .public-hero { padding-top: 92px; padding-bottom: 32px; }
   .hero-copy h1 { font-size: 46px; }
   .hero-visual { min-height: 510px; margin-top: 40px; }
   .payment-showcase { height: 500px; padding: 66px 9px 51px; gap: 7px; border-radius: 22px; }
