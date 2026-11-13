@@ -12,14 +12,14 @@ const esc = value => {
 export async function systemsScreen(app) {
   if (state.session.system.id !== 'SIS_0000' || state.session.user.perfil !== 'admin') return;
   app.innerHTML = shell(`<div class="panel">
-    <div class="notice"><strong>Escopo do cadastro</strong><p>Cada registro representa uma organização contratante e seu site. Somente administradores da organização recebem acesso ao painel GateGuard. Compradores e usuários finais não recebem login.</p></div>
+    <div class="notice"><strong>Escopo do cadastro</strong><p>Cada registro representa uma organização contratante e seu produto digital, que pode ser um site, aplicativo ou programa. Somente administradores da organização recebem acesso ao painel GateGuard. Compradores e usuários finais não recebem login.</p></div>
     <form id="site-registration" class="system-form">
       <fieldset id="site-fields" disabled>
         <h2 class="form-section-title">Organização e site</h2>
         <section class="form-section">
           <input name="systemEmail" type="hidden" value="${esc(SYSTEM_EMAIL)}"><input name="portalUrl" type="hidden" value="${esc(SYSTEM_URL)}">
           <div class="system-fields"><label>ID da organização<input name="system" readonly></label><label>Nome da organização*<input name="name" required maxlength="120"></label></div>
-          <label>URL pública do site*<input name="siteUrl" type="url" required placeholder="https://www.exemplo.com.br"></label>
+          <label>URL pública do produto (opcional)<input name="siteUrl" type="url" placeholder="https://play.google.com/store/apps/details?id=..."><small>Use um site institucional, Google Play, Microsoft Store, GitHub ou outra página pública. Não informe uma URL privada da API. Se ainda não existir uma página pública, deixe em branco.</small></label>
           <label>Modelo de integração*<select name="integrationMode" required><option value="OWN_BACKEND">A organização já possui backend</option><option value="GATEGUARD_HOSTED">Backend excepcional fornecido pelo GateGuard</option></select></label>
           <p id="integration-mode-help" class="notice"></p>
           <div class="phone-field"><label>Telefone*<input name="phone" required inputmode="numeric" maxlength="14" placeholder="(00)00000-0000"></label><label class="inline-check"><input type="checkbox" name="whatsapp"> WhatsApp</label></div>

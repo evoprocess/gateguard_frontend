@@ -1,5 +1,16 @@
 const digits = value => String(value || '').replace(/\D/g, '');
 
+const formatCpf = value => digits(value).slice(0, 11)
+  .replace(/^(\d{3})(\d)/, '$1.$2')
+  .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+  .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+
+const formatCnpj = value => digits(value).slice(0, 14)
+  .replace(/^(\d{2})(\d)/, '$1.$2')
+  .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+  .replace(/\.(\d{3})(\d)/, '.$1/$2')
+  .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+
 export function validCpf(value) {
   const cpf = digits(value);
   if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
@@ -24,7 +35,12 @@ export function validCnpj(value) {
   return Number(cnpj[12]) === calculate(12) && Number(cnpj[13]) === calculate(13);
 }
 
-export function bindDocumentValidation(input, type = () => digits(input.value).length === 14 ? 'CNPJ' : 'CPF') {
+export function bindDocumentValidation(input, typeOrOptions = () => digits(input.value).length === 14 ? 'CNPJ' : 'CPF') {
+  const options = typeof typeOrOptions === 'object' && typeOrOptions !== null ? typeOrOptions : null;
+  const typeInputs = Array.from(options?.typeInputs || []);
+  const type = typeof typeOrOptions === 'function'
+    ? typeOrOptions
+    : () => typeInputs.find(item => item.checked)?.value || (digits(input.value).length === 14 ? 'CNPJ' : 'CPF');
   const error = document.createElement('small');
   error.className = 'document-validation-error';
   error.hidden = true;
@@ -41,7 +57,31 @@ export function bindDocumentValidation(input, type = () => digits(input.value).l
     input.setAttribute('aria-invalid', String(!valid && Boolean(input.value.trim())));
     return valid;
   };
-  input.addEventListener('input', () => validate());
+  const syncType = () => {
+    if (!options) return;
+    const selectedType = type();
+    const isCnpj = selectedType === 'CNPJ';
+    input.maxLength = isCnpj ? 18 : 14;
+    input.placeholder = isCnpj ? '00.000.000/0000-00' : '000.000.000-00';
+    input.value = isCnpj ? formatCnpj(input.value) : formatCpf(input.value);
+    if (options.label) options.label.textContent = `${selectedType}*`;
+    if (options.corporateField) {
+      const corporateInput = options.corporateField.querySelector('input');
+      options.corporateField.classList.toggle('is-invisible', !isCnpj);
+      options.corporateField.setAttribute('aria-hidden', String(!isCnpj));
+      if (corporateInput) {
+        corporateInput.disabled = !isCnpj;
+        corporateInput.required = isCnpj;
+      }
+    }
+    validate();
+  };
+  input.addEventListener('input', () => {
+    if (options) input.value = type() === 'CNPJ' ? formatCnpj(input.value) : formatCpf(input.value);
+    validate();
+  });
   input.addEventListener('blur', () => { touched = true; validate(true); });
+  typeInputs.forEach(item => item.addEventListener('change', syncType));
+  syncType();
   return validate;
 }
