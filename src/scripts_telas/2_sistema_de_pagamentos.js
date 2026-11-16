@@ -70,8 +70,9 @@ async function loadEvotvTestConsole(app) {
   status.textContent = 'Verificando Asaas e integração EVOTV...';
   feedback.textContent = '';
   try {
-    const [health, historyData] = await Promise.all([
+    const [health, currentHistory, legacyHistory] = await Promise.all([
       api('/api/payment-tests/evotv'),
+      api('/api/payments/history?system=SIS_0003'),
       api('/api/payments/history?system=SIS_0002')
     ]);
     const sandboxReady = health.environment === 'sandbox' && health.asaasConnected && health.integrationEnabled;
@@ -82,10 +83,13 @@ async function loadEvotvTestConsole(app) {
     ];
     status.className = `payment-test-status ${sandboxReady ? 'is-ready' : 'is-warning'}`;
     status.textContent = labels.join(' · ');
-    const payments = (historyData.payments || []).filter(payment =>
+    const legacyEvotvPayments = (legacyHistory.payments || []).filter(payment =>
       payment.system === 'SIS_0002'
-      && (payment.category === 'SITE_BUYER_PAYMENT' || String(payment.event || '').startsWith('SITE_PAYMENT'))
-    ).slice(0, 30);
+      && /^EVOTV_[a-f0-9]{32}_\d{8}$/i.test(String(payment.chargeReference || ''))
+    );
+    const payments = [...(currentHistory.payments || []), ...legacyEvotvPayments]
+      .filter(payment => payment.category === 'SITE_BUYER_PAYMENT' || String(payment.event || '').startsWith('SITE_PAYMENT'))
+      .slice(0, 30);
     list.innerHTML = payments.map(payment => testPaymentRow(payment, sandboxReady)).join('')
       || '<p>Nenhum pagamento de comprador do EVOTV aparece no histórico. Gere uma cobrança Pix pelo programa ou aplicativo e atualize esta lista.</p>';
     app.querySelectorAll('[data-confirm-sandbox]').forEach(button => {
