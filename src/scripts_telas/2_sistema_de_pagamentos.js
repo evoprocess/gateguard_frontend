@@ -21,6 +21,44 @@ function testPaymentRow(payment, canSimulate) {
   return `<article class="payment-test-row"><div><strong>${esc(payment.description || payment.chargeReference || payment.id)}</strong><p>Ref.: ${esc(payment.chargeReference || payment.id)} · R$ ${money(payment.value)} · ${esc(payment.dueDate || 'Sem vencimento')}</p>${awaitingWebhook ? '<small>Simulação enviada; aguardando o webhook.</small>' : ''}</div><span class="badge">${esc(payment.status)}</span>${canConfirm ? `<button type="button" data-confirm-sandbox="${esc(payment.id)}">Simular recebimento no Sandbox</button>` : ''}</article>`;
 }
 
+function renderSubscriptionTestAccount(container, account) {
+  const stateLabel = account.active ? 'LIBERADA' : 'BLOQUEADA';
+  container.innerHTML = `<div class="subscription-test-account"><div><small>CONTA DESCARTÁVEL CONFIGURADA</small><strong>${esc(account.login)}</strong><span>Estado atual: <b>${stateLabel}</b>${account.validUntil ? ` · validade ${esc(new Date(account.validUntil).toLocaleString('pt-BR'))}` : ''}</span></div><div class="subscription-test-actions"><button type="button" data-subscription-test="block" ${account.canBlock ? '' : 'disabled'}>Bloquear conta de teste</button><button type="button" data-subscription-test="release" ${account.canRelease ? '' : 'disabled'}>Liberar conta de teste</button></div></div>`;
+}
+
+async function loadEvotvSubscriptionTest(app) {
+  const container = app.querySelector('#evotv-subscription-test');
+  const feedback = app.querySelector('#evotv-subscription-feedback');
+  if (!container || !feedback) return;
+  container.innerHTML = '<p>Consultando a conta descartável configurada no EVOTV...</p>';
+  feedback.textContent = '';
+  try {
+    const result = await api('/api/payment-tests/evotv/subscription');
+    renderSubscriptionTestAccount(container, result.account);
+    container.querySelectorAll('[data-subscription-test]').forEach(button => {
+      button.onclick = async () => {
+        const action = button.dataset.subscriptionTest;
+        const verb = action === 'block' ? 'bloquear' : 'liberar';
+        if (!window.confirm(`Deseja ${verb} somente a conta descartável ${result.account.login}? A rotina global não será executada.`)) return;
+        container.querySelectorAll('button').forEach(item => { item.disabled = true; });
+        feedback.className = 'payment-test-feedback';
+        feedback.textContent = `${action === 'block' ? 'Bloqueando' : 'Liberando'} a conta descartável...`;
+        try {
+          const updated = await api(`/api/payment-tests/evotv/subscription/${action}`, { method: 'POST', body: '{}' });
+          await loadEvotvSubscriptionTest(app);
+          feedback.textContent = `Conta ${updated.account.login} ${updated.account.active ? 'liberada' : 'bloqueada'}; operação registrada na auditoria do EVOTV.`;
+        } catch (error) {
+          await loadEvotvSubscriptionTest(app);
+          feedback.className = 'payment-test-feedback error';
+          feedback.textContent = error.message;
+        }
+      };
+    });
+  } catch (error) {
+    container.innerHTML = `<p class="error">${esc(error.message)}</p>`;
+  }
+}
+
 async function loadEvotvTestConsole(app) {
   const status = app.querySelector('#evotv-test-status');
   const list = app.querySelector('#evotv-test-payments');
@@ -28,6 +66,7 @@ async function loadEvotvTestConsole(app) {
   const refresh = app.querySelector('#evotv-test-refresh');
   if (!status || !list || !refresh) return;
   refresh.disabled = true;
+  loadEvotvSubscriptionTest(app);
   status.textContent = 'Verificando Asaas e integração EVOTV...';
   feedback.textContent = '';
   try {
@@ -104,7 +143,7 @@ export async function paymentsScreen(app) {
     <div class="notice"><strong>Dois contextos financeiros separados.</strong><p><b>Operações dos compradores</b> são pagamentos processados para o site da organização. <b>Cobranças GateGuard</b> são mensalidades e serviços cobrados pelo GateGuard à organização. Compradores do site não acessam este painel.</p></div>
     ${platformAdmin ? `<form id="plan-form" class="add-form"><h2 id="plan-form-title">Cobrar mensalidade GateGuard</h2><select name="system" required><option value="">Carregando organizações...</option></select><input name="name" placeholder="Organização" required><input name="cpfCnpj" placeholder="CPF/CNPJ" required><input name="email" type="email" placeholder="E-mail financeiro"><input name="value" type="number" min="5" step=".01" placeholder="Mensalidade" required><input name="nextDueDate" type="date" required><button>Salvar mensalidade</button><button type="button" id="cancel-edit" hidden>Cancelar edição</button></form>
       <form id="extra-form" class="add-form"><h2>Cobrar serviço adicional GateGuard</h2><select name="system" required><option value="">Carregando organizações...</option></select><input name="name" placeholder="Organização" required><input name="cpfCnpj" placeholder="CPF/CNPJ" required><input name="email" type="email" placeholder="E-mail financeiro"><input name="serviceDescription" placeholder="Descrição do serviço" required><input name="value" type="number" min="5" step=".01" placeholder="Valor" required><input name="dueDate" type="date" required><button>Gerar cobrança</button></form>` : ''}
-    ${platformAdmin ? `<section class="payment-test-console"><div class="sis-head"><div><span class="payment-test-kicker">ACESSO EXCLUSIVO · SIS_0000</span><h2>Homologação de pagamento EVOTV</h2><p>Use um login descartável no programa de PC ou no app Android. Os dois usam o mesmo backend e geram a cobrança vinculada à conta de teste.</p></div><button type="button" id="evotv-test-refresh">Atualizar teste</button></div><div id="evotv-test-status" class="payment-test-status" aria-live="polite">Verificando...</div><ol class="payment-test-steps"><li>Gere uma cobrança Pix dentro do EVOTV com a conta descartável.</li><li>Quando ela aparecer abaixo como pendente, use a simulação Sandbox para testar o Asaas e o webhook do GateGuard.</li><li>Confira aqui se o pagamento foi registrado como recebido. A aplicação ao login é feita pelo backend EVOTV na manutenção diária, às 01:00.</li></ol><p id="evotv-test-feedback" class="payment-test-feedback" aria-live="polite"></p><div id="evotv-test-payments">Carregando pagamentos...</div><div class="payment-test-blocking"><h3>Teste de bloqueio e liberação do login</h3><p>Esta tela ainda não altera vencimentos nem executa a manutenção do EVOTV. O acionamento manual <code>workflow_dispatch</code> roda para todas as contas e pode afetar clientes reais, portanto não o use como teste. Para testar um login específico com segurança, é necessário um endpoint administrativo direcionado no backend EVOTV.</p></div></section>` : ''}
+    ${platformAdmin ? `<section class="payment-test-console"><div class="sis-head"><div><span class="payment-test-kicker">ACESSO EXCLUSIVO · SIS_0000</span><h2>Homologação de pagamento EVOTV</h2><p>Use um login descartável no programa de PC ou no app Android. Os dois usam o mesmo backend e geram a cobrança vinculada à conta de teste.</p></div><button type="button" id="evotv-test-refresh">Atualizar teste</button></div><div id="evotv-test-status" class="payment-test-status" aria-live="polite">Verificando...</div><ol class="payment-test-steps"><li>Gere uma cobrança Pix dentro do EVOTV com a conta descartável.</li><li>Quando ela aparecer abaixo como pendente, use a simulação Sandbox para testar o Asaas e o webhook do GateGuard.</li><li>Confira aqui se o pagamento foi registrado como recebido. A reconciliação automática continua diariamente às 01:00.</li></ol><p id="evotv-test-feedback" class="payment-test-feedback" aria-live="polite"></p><div id="evotv-test-payments">Carregando pagamentos...</div><div class="payment-test-blocking"><h3>Teste direcionado de bloqueio e liberação</h3><p>As ações abaixo operam somente sobre a conta configurada e marcada como descartável no backend EVOTV. Elas não executam a rotina global, não percorrem outros logins e não alteram a validade.</p><p id="evotv-subscription-feedback" class="payment-test-feedback" aria-live="polite"></p><div id="evotv-subscription-test">Carregando conta descartável...</div></div></section>` : ''}
     <p id="pay-error" class="error"></p>
     <section class="sis"><div class="sis-head"><div><h2>Operações dos compradores do site</h2><p>Visão detalhada para suporte, conciliação, análise de estornos e acompanhamento de eventos processados pela API.</p></div></div><div id="site-payment-history">Carregando...</div></section>
     <section class="sis"><div class="sis-head"><div><h2>Cobranças do GateGuard à organização</h2><p>Mensalidade da plataforma e serviços adicionais contratados pela organização.</p></div></div><div id="gateguard-billing">Carregando...</div></section>
