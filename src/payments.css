@@ -5,3 +5,18 @@
 .payment-checkout label { display: block; margin: 15px 0 7px; font-weight: 800; }
 .payment-checkout textarea { width: 100%; height: 90px; padding: 10px; resize: none; }
 .payment-checkout [data-copy-pix], .payment-link { display: block; width: 100%; margin-top: 12px; padding: 12px; border: 0; border-radius: 9px; background: #2962ff; color: #fff; text-decoration: none; cursor: pointer; }
+.payment-test-console { margin: 24px 0; padding: 22px; border: 1px solid #cbd7ef; border-radius: 16px; background: #f7f9ff; }
+.payment-test-console .sis-head { align-items: flex-start; }
+.payment-test-console h2 { margin: 5px 0; }
+.payment-test-kicker { color: #3659a8; font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+.payment-test-status { margin: 14px 0; padding: 11px 13px; border-radius: 9px; background: #eef2f8; font-size: 14px; font-weight: 700; }
+.payment-test-status.is-ready { background: #e5f6ed; color: #17683a; }
+.payment-test-status.is-warning { background: #fff3d9; color: #775100; }
+.payment-test-steps { padding-left: 22px; line-height: 1.6; }
+.payment-test-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 10px 0; padding: 13px; border: 1px solid #dce3ef; border-radius: 10px; background: #fff; }
+.payment-test-row p { margin: 5px 0 0; color: #596579; font-size: 13px; }
+.payment-test-feedback { min-height: 1.3em; margin: 8px 0; font-weight: 700; }
+.payment-test-blocking { margin-top: 20px; padding-top: 14px; border-top: 1px solid #d6deec; }
+.payment-test-blocking h3 { margin-bottom: 6px; }
+.payment-test-blocking p { margin-top: 0; line-height: 1.55; }
+@media (max-width: 680px) { .payment-test-row { align-items: flex-start; flex-direction: column; } .payment-test-console { padding: 16px; } }

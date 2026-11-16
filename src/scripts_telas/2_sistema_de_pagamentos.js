@@ -9,9 +9,71 @@ const esc = value => {
 };
 const money = value => Number(value || 0).toFixed(2).replace('.', ',');
 const payable = new Set(['PENDING', 'OVERDUE', 'DUNNING_REQUESTED', 'AWAITING_RISK_ANALYSIS']);
+const requestedSandboxConfirmations = new Set();
 
 function paymentRow(payment, showSite = false) {
   return `<div class="user"><strong>${esc(payment.description || payment.chargeReference || payment.id)}</strong>${showSite ? `<span>${esc(payment.system)}</span>` : ''}<span>Ref.: ${esc(payment.chargeReference || payment.id || '—')}</span><span>Vencimento: ${esc(payment.dueDate || '—')}</span><span>R$ ${money(payment.value)}</span><span class="badge">${esc(payment.status)}</span></div>`;
+}
+
+function testPaymentRow(payment, canSimulate) {
+  const awaitingWebhook = requestedSandboxConfirmations.has(payment.id) && ['PENDING', 'OVERDUE'].includes(payment.status);
+  const canConfirm = canSimulate && !awaitingWebhook && payment.billingType === 'PIX' && ['PENDING', 'OVERDUE'].includes(payment.status);
+  return `<article class="payment-test-row"><div><strong>${esc(payment.description || payment.chargeReference || payment.id)}</strong><p>Ref.: ${esc(payment.chargeReference || payment.id)} · R$ ${money(payment.value)} · ${esc(payment.dueDate || 'Sem vencimento')}</p>${awaitingWebhook ? '<small>Simulação enviada; aguardando o webhook.</small>' : ''}</div><span class="badge">${esc(payment.status)}</span>${canConfirm ? `<button type="button" data-confirm-sandbox="${esc(payment.id)}">Simular recebimento no Sandbox</button>` : ''}</article>`;
+}
+
+async function loadEvotvTestConsole(app) {
+  const status = app.querySelector('#evotv-test-status');
+  const list = app.querySelector('#evotv-test-payments');
+  const feedback = app.querySelector('#evotv-test-feedback');
+  const refresh = app.querySelector('#evotv-test-refresh');
+  if (!status || !list || !refresh) return;
+  refresh.disabled = true;
+  status.textContent = 'Verificando Asaas e integração EVOTV...';
+  feedback.textContent = '';
+  try {
+    const [health, historyData] = await Promise.all([
+      api('/api/payment-tests/evotv'),
+      api('/api/payments/history?system=SIS_0002')
+    ]);
+    const sandboxReady = health.environment === 'sandbox' && health.asaasConnected && health.integrationEnabled;
+    const labels = [
+      `Asaas: ${health.environment === 'sandbox' ? 'Sandbox' : 'Produção'}`,
+      `Conexão: ${health.asaasConnected ? 'ativa' : 'indisponível'}`,
+      `API EVOTV: ${health.integrationEnabled ? 'ativa' : 'desativada'}`
+    ];
+    status.className = `payment-test-status ${sandboxReady ? 'is-ready' : 'is-warning'}`;
+    status.textContent = labels.join(' · ');
+    const payments = (historyData.payments || []).filter(payment =>
+      payment.system === 'SIS_0002'
+      && (payment.category === 'SITE_BUYER_PAYMENT' || String(payment.event || '').startsWith('SITE_PAYMENT'))
+    ).slice(0, 30);
+    list.innerHTML = payments.map(payment => testPaymentRow(payment, sandboxReady)).join('')
+      || '<p>Nenhum pagamento de comprador do EVOTV aparece no histórico. Gere uma cobrança Pix pelo programa ou aplicativo e atualize esta lista.</p>';
+    app.querySelectorAll('[data-confirm-sandbox]').forEach(button => {
+      button.onclick = async () => {
+        if (!window.confirm('Confirmar esta cobrança no Sandbox do Asaas? Nenhum valor real será movimentado.')) return;
+        button.disabled = true;
+        feedback.className = 'payment-test-feedback';
+        feedback.textContent = 'Enviando a simulação ao Asaas...';
+        try {
+          const result = await api(`/api/payment-tests/evotv/payments/${encodeURIComponent(button.dataset.confirmSandbox)}/confirm`, { method: 'POST', body: '{}' });
+          requestedSandboxConfirmations.add(button.dataset.confirmSandbox);
+          feedback.textContent = `O Asaas Sandbox respondeu ${result.status || 'sem status'}. Aguarde o webhook e atualize a lista para conferir se o GateGuard registrou o recebimento.`;
+          window.setTimeout(() => loadEvotvTestConsole(app), 1500);
+        } catch (error) {
+          feedback.className = 'payment-test-feedback error';
+          feedback.textContent = error.message;
+          button.disabled = false;
+        }
+      };
+    });
+  } catch (error) {
+    status.className = 'payment-test-status is-warning';
+    status.textContent = error.message;
+    list.innerHTML = '<p>Não foi possível carregar os pagamentos de teste.</p>';
+  } finally {
+    refresh.disabled = false;
+  }
 }
 
 function bindCheckout(app) {
@@ -42,12 +104,17 @@ export async function paymentsScreen(app) {
     <div class="notice"><strong>Dois contextos financeiros separados.</strong><p><b>Operações dos compradores</b> são pagamentos processados para o site da organização. <b>Cobranças GateGuard</b> são mensalidades e serviços cobrados pelo GateGuard à organização. Compradores do site não acessam este painel.</p></div>
     ${platformAdmin ? `<form id="plan-form" class="add-form"><h2 id="plan-form-title">Cobrar mensalidade GateGuard</h2><select name="system" required><option value="">Carregando organizações...</option></select><input name="name" placeholder="Organização" required><input name="cpfCnpj" placeholder="CPF/CNPJ" required><input name="email" type="email" placeholder="E-mail financeiro"><input name="value" type="number" min="5" step=".01" placeholder="Mensalidade" required><input name="nextDueDate" type="date" required><button>Salvar mensalidade</button><button type="button" id="cancel-edit" hidden>Cancelar edição</button></form>
       <form id="extra-form" class="add-form"><h2>Cobrar serviço adicional GateGuard</h2><select name="system" required><option value="">Carregando organizações...</option></select><input name="name" placeholder="Organização" required><input name="cpfCnpj" placeholder="CPF/CNPJ" required><input name="email" type="email" placeholder="E-mail financeiro"><input name="serviceDescription" placeholder="Descrição do serviço" required><input name="value" type="number" min="5" step=".01" placeholder="Valor" required><input name="dueDate" type="date" required><button>Gerar cobrança</button></form>` : ''}
+    ${platformAdmin ? `<section class="payment-test-console"><div class="sis-head"><div><span class="payment-test-kicker">ACESSO EXCLUSIVO · SIS_0000</span><h2>Homologação de pagamento EVOTV</h2><p>Use um login descartável no programa de PC ou no app Android. Os dois usam o mesmo backend e geram a cobrança vinculada à conta de teste.</p></div><button type="button" id="evotv-test-refresh">Atualizar teste</button></div><div id="evotv-test-status" class="payment-test-status" aria-live="polite">Verificando...</div><ol class="payment-test-steps"><li>Gere uma cobrança Pix dentro do EVOTV com a conta descartável.</li><li>Quando ela aparecer abaixo como pendente, use a simulação Sandbox para testar o Asaas e o webhook.</li><li>Depois, a manutenção do EVOTV consulta o pagamento e aplica 30 dias ao login vinculado.</li></ol><p id="evotv-test-feedback" class="payment-test-feedback" aria-live="polite"></p><div id="evotv-test-payments">Carregando pagamentos...</div><div class="payment-test-blocking"><h3>Teste do bloqueio por vencimento</h3><p>A rotina do EVOTV roda diariamente às 01:00. O acionamento manual <code>workflow_dispatch</code> executa a manutenção para todas as contas e pode bloquear outros logins vencidos. Use somente uma conta descartável e confira o resultado no EVOTV; o GateGuard não tem acesso ao banco de usuários do EVOTV.</p></div></section>` : ''}
     <p id="pay-error" class="error"></p>
     <section class="sis"><div class="sis-head"><div><h2>Operações dos compradores do site</h2><p>Visão detalhada para suporte, conciliação, análise de estornos e acompanhamento de eventos processados pela API.</p></div></div><div id="site-payment-history">Carregando...</div></section>
     <section class="sis"><div class="sis-head"><div><h2>Cobranças do GateGuard à organização</h2><p>Mensalidade da plataforma e serviços adicionais contratados pela organização.</p></div></div><div id="gateguard-billing">Carregando...</div></section>
     <div id="payment-checkout" class="payment-checkout" hidden></div>
   </div>`, 'Central Financeira');
   bindShell();
+  if (platformAdmin) {
+    app.querySelector('#evotv-test-refresh').onclick = () => loadEvotvTestConsole(app);
+    loadEvotvTestConsole(app);
+  }
 
   const form = app.querySelector('#plan-form');
   if (form) {
